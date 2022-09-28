@@ -39,7 +39,8 @@ kubeadm token create --print-join-command > /vagrant/configs/join.sh
 # Install Calico Network Plugin
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
-
+# Sleep a little to avoid running next command too soon
+sleep 4
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/custom-resources.yaml
 
 # Install Metrics Server
