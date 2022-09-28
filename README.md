@@ -1,6 +1,13 @@
 
 # Vagrantfile and Scripts to Automate Kubernetes Setup using Kubeadm [Practice Environment for CKA/CKAD and CKS Exams]
 
+## Fork Specific Details
+This fork varies from the original repo as follows:
+1. Vagrant box changed from "bento/ubuntu-22.04" to "debian/bullseye64"
+2. CRI-O replaced by containerd
+3. Calico deployed using Tigera Operators and Custom Resources
+4. Kubernetes upgraded to 1.25.2
+
 ## Documentation
 
 Current k8s version for CKA, CKAD and CKS exam: 1.24
