@@ -75,7 +75,18 @@ subjects:
   namespace: kubernetes-dashboard
 EOF
 
-kubectl -n kubernetes-dashboard get secret "$(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}")" -o go-template="{{.data.token | base64decode}}" >> /vagrant/configs/token
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user-token
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: admin-user
+type: kubernetes.io/service-account-token
+EOF
+
+kubectl -n kubernetes-dashboard get secret admin-user-token -o go-template="{{.data.token | base64decode}}" >> /vagrant/configs/token
 
 sudo -i -u vagrant bash << EOF
 whoami
