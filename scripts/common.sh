@@ -15,14 +15,10 @@ sudo swapoff -a
 (crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab - || true
 sudo apt-get update -y
 sudo apt-get install gnupg2 curl -y
-# Install CRI-O Runtime
-
-OS="Debian_11"
-
-VERSION="1.23"
+# Install containerd
 
 # Create the .conf file to load the modules at bootup
-cat <<EOF | sudo tee /etc/modules-load.d/crio.conf
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
 EOF
@@ -31,7 +27,7 @@ sudo modprobe overlay
 sudo modprobe br_netfilter
 
 # Set up required sysctl params, these persist across reboots.
-cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-containerd.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
@@ -39,23 +35,17 @@ EOF
 
 sudo sysctl --system
 
-cat <<EOF | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /
-EOF
-cat <<EOF | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
-deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /
-EOF
+sudo apt  update
+sudo apt -y install containerd
 
-curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
+containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
 
-sudo apt-get update
-sudo apt-get install cri-o cri-o-runc -y
+sudo sed -i '/          \[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]/a\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true' /etc/containerd/config.toml
 
-sudo systemctl daemon-reload
-sudo systemctl enable crio --now
+sudo systemctl restart containerd
+sudo systemctl enable containerd
 
-echo "CRI runtime installed susccessfully"
+echo "containerd runtime installed susccessfully"
 
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
