@@ -14,9 +14,10 @@ sudo swapoff -a
 # keeps the swaf off during reboot
 (crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab - || true
 sudo apt-get update -y
+sudo apt-get install gnupg2 curl -y
 # Install CRI-O Runtime
 
-OS="xUbuntu_20.04"
+OS="Debian_11"
 
 VERSION="1.23"
 
