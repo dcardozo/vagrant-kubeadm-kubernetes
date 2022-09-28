@@ -1,5 +1,5 @@
-NUM_WORKER_NODES=2
-IP_NW="10.0.0."
+NUM_WORKER_NODES=1
+IP_NW="10.20.0."
 IP_START=10
 
 Vagrant.configure("2") do |config|
