@@ -11,8 +11,8 @@ KUBERNETES_VERSION="1.25.2-00"
 # disable swap
 sudo swapoff -a
 
-# keeps the swaf off during reboot
-(crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab - || true
+# keeps the swap off during reboot
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 sudo apt-get update -y
 sudo apt-get install gnupg2 curl -y
 # Install containerd
