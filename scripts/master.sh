@@ -4,6 +4,9 @@
 
 set -euxo pipefail
 
+CALICO_VERSION=v3.24.1
+K8S_DASHBOARD_VERSION=v2.7.0
+
 MASTER_IP="10.20.0.10"
 NODENAME=$(hostname -s)
 POD_CIDR="192.168.0.0/16"
@@ -38,10 +41,10 @@ kubeadm token create --print-join-command > /vagrant/configs/join.sh
 
 # Install Calico Network Plugin
 
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/$CALICO_VERSION/manifests/tigera-operator.yaml
 # Sleep a little to avoid running next command too soon
 sleep 4
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/custom-resources.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/$CALICO_VERSION/manifests/custom-resources.yaml
 
 # Install Metrics Server
 
@@ -49,7 +52,7 @@ kubectl apply -f https://raw.githubusercontent.com/scriptcamp/kubeadm-scripts/ma
 
 # Install Kubernetes Dashboard
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/$K8S_DASHBOARD_VERSION/aio/deploy/recommended.yaml
 
 # Create Dashboard User
 
