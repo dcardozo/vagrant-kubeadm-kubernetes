@@ -43,7 +43,7 @@ https://discuss.hashicorp.com/t/vagrant-2-2-18-osx-11-6-cannot-create-private-ne
 To provision the cluster, execute the following commands.
 
 ```shell
-git clone https://github.com/scriptcamp/vagrant-kubeadm-kubernetes.git
+git clone https://github.com/dcardozo/vagrant-kubeadm-kubernetes.git
 cd vagrant-kubeadm-kubernetes
 vagrant up
 ```
@@ -51,15 +51,20 @@ vagrant up
 ## Set Kubeconfig file variable
 
 ```shell
-cd vagrant-kubeadm-kubernetes
-cd configs
+cd vagrant-kubeadm-kubernetes/configs
 export KUBECONFIG=$(pwd)/config
 ```
 
-or you can copy the config file to .kube directory.
+or you can copy the config file to .kube directory. (_**Note**: This deletes previous contexts in ~/.kube/config; think twice!_)
 
 ```shell
 cp config ~/.kube/
+```
+
+## Start Proxy Server
+_Required if you want to access the dashboard._
+```shell
+kubectl proxy
 ```
 
 ## Kubernetes Dashboard URL
@@ -71,6 +76,7 @@ http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kube
 ## Kubernetes login token
 
 Vagrant up will create the admin user token and saves in the configs directory.
+Use this token to access the dashboard.
 
 ```shell
 cd vagrant-kubeadm-kubernetes
